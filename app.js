@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Obtenemos el ID de la propiedad desde la URL (ej: index.html?propiedad=DEPTO01)
     const params = new URLSearchParams(window.location.search);
-    const propiedadId = params.get('propiedad') || 'DEPTO01'; // Usamos DEPTO01 por defecto.
+    const propiedadId = params.get('propiedad') || 'LMB101'; // Usamos DEPTO01 por defecto.
     
     // --- FIN DE LA CONFIGURACIÓN ---
   
@@ -36,9 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Muestra el nombre de la propiedad en la página
     function displayPropiedadInfo() {
         const nombresPropiedades = {
-            'DEPTO01': 'Departamento "El Cielo"',
-            'DEPTO02': 'Departamento "La Arena"',
-            'DEPTO03': 'Departamento "El Mar"'
+            'LMB101': 'Maalob Kuxtal',
+            'LMC106': 'Kiimak Oolal',
+            'LMC207': 'Akbal'
         };
         document.getElementById('propiedadNombre').textContent = nombresPropiedades[propiedadId] || 'Propiedad no encontrada';
     }
