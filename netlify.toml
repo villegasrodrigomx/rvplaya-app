@@ -1,0 +1,11 @@
+# Archivo de configuración para Netlify
+
+[[redirects]]
+  # Cualquier petición que nuestra app haga a "/api"
+  from = "/api"
+  
+  # Será redirigida en secreto a nuestro script de Google.
+  to = "https://script.google.com/macros/s/AKfycbytdfEwfk7tkmXKNVWeAJnsKXeQtc1EflxguAmHoH20awgaQzpPccpmzkxFuIiGxhm3/exec"
+  
+  # Código de estado 200 significa que es una reescritura, no una redirección.
+  status = 200
