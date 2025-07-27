@@ -3,9 +3,7 @@
 [[redirects]]
   # Cualquier petición que nuestra app haga a "/api"
   from = "/api"
-  
-  # Será redirigida en secreto a nuestro script de Google.
+    # Será redirigida en secreto a nuestro script de Google.
   to = "https://script.google.com/macros/s/AKfycbw5DmD_ybDv4DlLI63tgfcZEo1G6yof58r5RaMvagehqZo1vI94cTJ0kvfVqYf_8tMt/exec"
-  
-  # Código de estado 200 significa que es una reescritura, no una redirección.
+    # Código de estado 200 significa que es una reescritura, no una redirección.
   status = 200
