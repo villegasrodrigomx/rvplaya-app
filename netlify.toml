@@ -5,7 +5,7 @@
   from = "/api"
   
   # Será redirigida en secreto a nuestro script de Google.
-  to = "https://script.google.com/macros/s/AKfycbytdfEwfk7tkmXKNVWeAJnsKXeQtc1EflxguAmHoH20awgaQzpPccpmzkxFuIiGxhm3/exec"
+  to = "https://script.google.com/macros/s/AKfycbxylj0C3fdlNFPwIGO3K_u5Sq1cV21wU-jNDK9ag5A7wdbbm4nz7Eg0Say6Fhib8ZVk/exec"
   
   # Código de estado 200 significa que es una reescritura, no una redirección.
   status = 200
