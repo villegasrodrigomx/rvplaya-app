@@ -1,21 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // --- CONFIGURACIÓN ---
-    // La app ya no habla directamente con Google. Habla con nuestro proxy en Netlify.
     const API_ENDPOINT = '/api';
-    
-    // Obtenemos el ID de la propiedad desde la URL (ej: index.html?propiedad=DEPTO01)
     const params = new URLSearchParams(window.location.search);
-    const propiedadId = params.get('propiedad') || 'LMB101'; // Usamos DEPTO01 por defecto.
+    const propiedadId = params.get('propiedad') || 'LMB101';
     
-    // --- FIN DE LA CONFIGURACIÓN ---
-  
+    // --- VARIABLES GLOBALES ---
     let currentDate = new Date();
     let occupiedDates = [];
     let selection = { checkIn: null, checkOut: null };
     let currentPrice = 0;
   
-    // Constantes para todos los elementos del DOM
+    // --- ELEMENTOS DEL DOM ---
     const monthYearEl = document.getElementById('monthYear');
     const calendarDaysEl = document.getElementById('calendarDays');
     const customerNameEl = document.getElementById('customerName');
@@ -33,7 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const bookingFormEl = document.getElementById('bookingForm');
     const bookingMessageEl = document.getElementById('bookingMessage');
 
-    // Muestra el nombre de la propiedad en la página
+    // --- FUNCIONES PRINCIPALES ---
+
     function displayPropiedadInfo() {
         const nombresPropiedades = {
             'LMB101': 'Maalob Kuxtal',
@@ -43,12 +40,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('propiedadNombre').textContent = nombresPropiedades[propiedadId] || 'Propiedad no encontrada';
     }
 
-    // Obtiene los días ocupados desde el backend
     async function fetchOccupiedDates() {
         const url = `${API_ENDPOINT}?action=getAvailability&propiedadId=${propiedadId}`;
         try {
             const response = await fetch(url);
-            if (!response.ok) throw new Error('Error de red al obtener disponibilidad.');
+            if (!response.ok) {
+                throw new Error('Error de red al obtener disponibilidad.');
+            }
             const data = await response.json();
             if (data.status === 'success') {
                 occupiedDates = data.ocupados;
@@ -64,33 +62,38 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Dibuja el calendario en la pantalla
     function renderCalendar(date) {
         calendarDaysEl.innerHTML = '';
+        monthYearEl.textContent = date.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
         const month = date.getMonth();
         const year = date.getFullYear();
-        monthYearEl.textContent = date.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
         const firstDayOfMonth = new Date(year, month, 1);
         const lastDayOfMonth = new Date(year, month + 1, 0);
         const startDayOfWeek = firstDayOfMonth.getDay();
+        
         for (let i = 0; i < startDayOfWeek; i++) {
             calendarDaysEl.insertAdjacentHTML('beforeend', '<div class="calendar-day empty"></div>');
         }
+
         for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
             const dayCell = document.createElement('div');
             const dayDate = new Date(year, month, day);
             const isoDate = toISODateString(dayDate);
             const classes = ['calendar-day'];
             const todayISO = toISODateString(new Date());
+
             if (isoDate === todayISO) classes.push('today');
+            
             if (occupiedDates.includes(isoDate) || dayDate < new Date().setHours(0, 0, 0, 0)) {
                 classes.push('occupied');
             } else {
                 dayCell.addEventListener('click', () => handleDayClick(dayCell));
             }
+            
             if (selection.checkIn && isoDate === toISODateString(selection.checkIn)) classes.push('selected');
             if (selection.checkOut && isoDate === toISODateString(selection.checkOut)) classes.push('selected');
             if (selection.checkIn && selection.checkOut && dayDate > selection.checkIn && dayDate < selection.checkOut) classes.push('selected');
+            
             dayCell.className = classes.join(' ');
             dayCell.textContent = day;
             dayCell.dataset.date = isoDate;
@@ -98,7 +101,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Maneja la selección de fechas
     async function handleDayClick(cell) {
         const clickedDate = new Date(cell.dataset.date + 'T12:00:00Z');
         hideMessages();
@@ -134,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
         renderCalendar(currentDate);
     }
 
-    // Pide el precio de la selección al backend
     async function updatePrice() {
         if (!selection.checkIn || !selection.checkOut) return;
         priceLoaderEl.style.display = 'block';
@@ -145,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const url = `${API_ENDPOINT}?action=calculatePrice&propiedadId=${propiedadId}&checkIn=${checkInStr}&checkOut=${checkOutStr}`;
             const response = await fetch(url);
-            if (!response.ok) throw new Error(`Error de red`);
+            if (!response.ok) throw new Error('Error de red');
             const data = await response.json();
             priceLoaderEl.style.display = 'none';
             if (data.status === 'success') {
@@ -167,7 +168,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Envía la reserva final al backend
     async function submitBooking() {
         submitBookingBtn.disabled = true;
         submitBookingBtn.textContent = 'Procesando...';
@@ -184,9 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch(API_ENDPOINT, {
                 method: 'POST',
                 body: JSON.stringify(bookingData),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
             if (!response.ok) {
                 const errorResult = await response.json().catch(() => ({ message: 'Error en el servidor.' }));
@@ -213,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Funciones de utilidad
+    // --- FUNCIONES DE UTILIDAD ---
     function validateForm() {
         const nameValid = customerNameEl.value.trim() !== '';
         const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmailEl.value);
@@ -225,4 +223,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function formatDate(date) { 
         if (!date) return ''; 
-        return date.toLocaleDateString('es-
+        return date.toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    function toISODateString(date) { 
+        return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+    }
+
+    // --- EVENT LISTENERS ---
+    prevMonthBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar(currentDate);
+    });
+    nextMonthBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar(currentDate);
+    });
+    customerNameEl.addEventListener('input', validateForm);
+    customerEmailEl.addEventListener('input', validateForm);
+    customerPhoneEl.addEventListener('input', validateForm);
+    submitBookingBtn.addEventListener('click', submitBooking);
+
+    // --- INICIAR LA APLICACIÓN ---
+    displayPropiedadInfo();
+    fetchOccupiedDates();
+});
