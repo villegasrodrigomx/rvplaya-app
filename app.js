@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // --- CONFIGURACIÓN ---
-    const API_ENDPOINT = '/api';
+    const API_ENDPOINT = '/.netlify/functions/engine';
     
     // --- ELEMENTOS DEL DOM ---
     const homeView = document.getElementById('view-home');
