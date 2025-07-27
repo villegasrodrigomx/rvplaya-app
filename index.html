@@ -4,72 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RV Playa - Reservas</title>
-
     <link rel="manifest" href="manifest.json">
-    
     <meta name="theme-color" content="#007bff">
-
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <main class="container">
-        <h1>Reservar Propiedad</h1>
-        <p id="propiedadNombre"></p> <div class="booking-engine">
-            <div class="calendar-container">
-                <div class="calendar-header">
-                  <button id="prevMonth">&lt; Anterior</button>
-                  <h2 id="monthYear">Cargando...</h2>
-                  <button id="nextMonth">Siguiente &gt;</button>
-                </div>
-                <div class="calendar-grid weekdays">
-                  <div class="weekday">Dom</div><div class="weekday">Lun</div><div class="weekday">Mar</div><div class="weekday">Mié</div><div class="weekday">Jue</div><div class="weekday">Vie</div><div class="weekday">Sáb</div>
-                </div>
-                <div class="calendar-grid" id="calendarDays"></div>
+        <div id="view-home">
+            <h1>Nuestras Propiedades</h1>
+            <div id="property-list" class="property-list">
+                <p>Cargando propiedades...</p>
             </div>
-            
-            <div id="priceSummary" class="price-summary" style="display: none;">
-                <h3>Resumen de Cotización</h3>
-                <p><span>Check-in:</span> <span id="summaryCheckIn"></span></p>
-                <p><span>Check-out:</span> <span id="summaryCheckOut"></span></p>
-                <p><span>Total de noches:</span> <span id="summaryNights"></span></p>
-                <p class="total"><span>PRECIO TOTAL:</span> <span id="summaryTotal"></span></p>
+        </div>
+
+        <div id="view-booking" style="display: none;">
+            <a href="index.html" class="back-link">&larr; Volver a la lista</a>
+            <h1>Reservar Propiedad</h1>
+            <h2 id="propiedadNombre" class="propiedad-nombre"></h2>
+
+            <div class="booking-engine">
+                <div class="calendar-container">
+                  <div class="calendar-header">
+                    <button id="prevMonth">&lt; Anterior</button>
+                    <h2 id="monthYear">Cargando...</h2>
+                    <button id="nextMonth">Siguiente &gt;</button>
+                  </div>
+                  <div class="calendar-grid weekdays">
+                    <div class="weekday">Dom</div><div class="weekday">Lun</div><div class="weekday">Mar</div><div class="weekday">Mié</div><div class="weekday">Jue</div><div class="weekday">Vie</div><div class="weekday">Sáb</div>
+                  </div>
+                  <div class="calendar-grid" id="calendarDays"></div>
+                </div>
+                <div id="priceSummary" class="price-summary" style="display: none;">
+                  <h3>Resumen de Cotización</h3>
+                  <p><span>Check-in:</span> <span id="summaryCheckIn"></span></p>
+                  <p><span>Check-out:</span> <span id="summaryCheckOut"></span></p>
+                  <p><span>Total de noches:</span> <span id="summaryNights"></span></p>
+                  <p class="total"><span>PRECIO TOTAL:</span> <span id="summaryTotal"></span></p>
+                </div>
+                <div id="priceLoader" style="display: none;">Calculando precio...</div>
+                <div class="booking-form" id="bookingForm" style="display: none;">
+                  <h3>Completa tu Reserva</h3>
+                  <div class="form-group">
+                    <label for="customerName">Nombre Completo:</label>
+                    <input type="text" id="customerName" placeholder="Tu nombre y apellido">
+                  </div>
+                  <div class="form-group">
+                    <label for="customerEmail">Correo Electrónico:</label>
+                    <input type="email" id="customerEmail" placeholder="tu.email@ejemplo.com">
+                  </div>
+                  <div class="form-group">
+                    <label for="customerPhone">Celular (10 dígitos):</label>
+                    <input type="tel" id="customerPhone" placeholder="Tu número de celular">
+                  </div>
+                  <button id="submitBooking" disabled>Confirmar Reserva</button>
+                </div>
+                <div id="bookingMessage" class="booking-message" style="display: none;"></div>
             </div>
-            <div id="priceLoader" style="display: none;">Calculando precio...</div>
-    
-            <div class="booking-form" id="bookingForm" style="display: none;">
-                <h3>Completa tu Reserva</h3>
-                <div class="form-group">
-                  <label for="customerName">Nombre Completo:</label>
-                  <input type="text" id="customerName" placeholder="Tu nombre y apellido">
-                </div>
-                <div class="form-group">
-                  <label for="customerEmail">Correo Electrónico:</label>
-                  <input type="email" id="customerEmail" placeholder="tu.email@ejemplo.com">
-                </div>
-                <div class="form-group">
-                  <label for="customerPhone">Celular (10 dígitos):</label>
-                  <input type="tel" id="customerPhone" placeholder="Tu número de celular">
-                </div>
-                <button id="submitBooking" disabled>Confirmar Reserva</button>
-            </div>
-            <div id="bookingMessage" class="booking-message" style="display: none;"></div>
         </div>
     </main>
     
     <script src="app.js"></script>
-
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(registration => {
-                    console.log('Service Worker registrado con éxito:', registration);
-                })
-                .catch(error => {
-                    console.log('Error al registrar el Service Worker:', error);
-                });
+            navigator.serviceWorker.register('/service-worker.js');
         }
     </script>
-
 </body>
 </html>
