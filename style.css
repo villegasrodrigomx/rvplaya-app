@@ -72,3 +72,53 @@ body {
 .booking-message { margin-top: 15px; padding: 15px; border-radius: 5px; text-align: center; font-weight: bold; }
 .booking-message.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 .booking-message.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+/* Estilos para la nueva lista de propiedades */
+.property-list {
+  display: grid;
+  gap: 20px;
+}
+
+.property-card {
+  background-color: var(--container-bg);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-decoration: none;
+  color: var(--font-color);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.property-card h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.propiedad-nombre {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    color: #6c757d;
+}
+
+.error {
+    color: #dc3545;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+}
