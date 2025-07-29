@@ -1,5 +1,4 @@
-// Este es el código de nuestra Función de Netlify v2.0
-// Ahora sabe diferenciar entre peticiones GET y POST.
+// engine.js - Versión Final Verificada
 
 exports.handler = async function (event, context) {
   // Obtenemos la URL secreta de nuestro script de Google desde las variables de Netlify.
@@ -15,8 +14,8 @@ exports.handler = async function (event, context) {
         headers: { "Content-Type": "application/json" },
         body: event.body, // Pasamos el cuerpo de la petición original (los datos del cliente)
       });
-    } else {
-      // Si es GET (para pedir disponibilidad, precios, etc.)...
+
+    } else { // Asumimos que es GET para todas las demás peticiones
       const queryString = new URLSearchParams(event.queryStringParameters).toString();
       const fullUrl = `${GOOGLE_SCRIPT_URL}?${queryString}`;
       response = await fetch(fullUrl);
@@ -29,22 +28,14 @@ exports.handler = async function (event, context) {
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "*", // Permitir acceso desde cualquier origen
+        "Access-Control-Allow-Origin": "*", // Permitimos el acceso
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     };
     
   } catch (error) {
-    // Si algo falla, devolvemos un error.
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ status: 'error', message: error.message }),
-    };
-  }
-};
-  } catch (error) {
-    // Si algo falla, devuelve un error.
+    // Si algo falla, devolvemos un error claro.
     return {
       statusCode: 500,
       body: JSON.stringify({ status: 'error', message: error.message }),
