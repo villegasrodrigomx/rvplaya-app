@@ -10,9 +10,9 @@
 }
 body {
   font-family: -apple-system, BlinkMacSystem-Font, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: var(--bg-color);
+  background-color: transparent;
   margin: 0;
-  padding: 20px;
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
