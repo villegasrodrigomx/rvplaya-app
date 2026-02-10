@@ -2,8 +2,8 @@
 
 exports.handler = async function (event, context) {
   // Obtenemos la URL secreta de nuestro script de Google desde las variables de Netlify.
-  //const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMdaEIZi3EqnDbVoul-EjVfjvl4bCu3GOwteHAQtK3rFqdVVCuh0EVcaKVRqCJ2pezqQ/exec";
+  const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
+  //const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMdaEIZi3EqnDbVoul-EjVfjvl4bCu3GOwteHAQtK3rFqdVVCuh0EVcaKVRqCJ2pezqQ/exec";
   let response;
 
   try {
@@ -43,4 +43,5 @@ exports.handler = async function (event, context) {
     };
   }
 };
+
 
