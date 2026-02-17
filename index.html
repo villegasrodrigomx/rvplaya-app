@@ -3,74 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RV Playa - Reservas</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#007bff">
-    <link rel="stylesheet" href="style.css">
+    <title>Reserva tu Estancia - RV Playa</title>
+    <link rel="stylesheet" href="style.css?v=2.0">
+    <style>
+        /* Estilos críticos inline para asegurar visualización */
+        .occupied { background-color: #ffcccc !important; color: #cc0000; text-decoration: line-through; cursor: not-allowed; }
+        .selected { background-color: #28a745 !important; color: white; }
+        .day { padding: 10px; border: 1px solid #eee; text-align: center; cursor: pointer; }
+        .day:hover:not(.occupied) { background-color: #f0f0f0; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body>
 
     <main class="container">
+        <h1 style="text-align: center;">RV Playa Reservas</h1>
+        
         <div id="view-home">
-            <h1>Nuestras Propiedades</h1>
-            <div id="property-list" class="property-list">
-                <p>Cargando propiedades...</p>
-            </div>
+            <p>Selecciona una propiedad:</p>
+            <div id="property-list">Cargando opciones...</div>
         </div>
 
-        <div id="view-booking" style="display: none;">
-            <a href="index.html" class="back-link">&larr; Volver a la lista</a>
-            <h1>Reservar Propiedad</h1>
-            <h2 id="propiedadNombre" class="propiedad-nombre"></h2>
-
+        <div id="view-booking" class="hidden">
+            <button onclick="window.location.reload()" style="margin-bottom:10px;">&larr; Volver</button>
+            <h2 id="propiedadNombre">Propiedad</h2>
+            
             <div class="booking-engine">
-                <div class="calendar-container">
-                  <div class="calendar-header">
-                    <button id="prevMonth">&lt; Anterior</button>
-                    <h2 id="monthYear">Cargando...</h2>
-                    <button id="nextMonth">Siguiente &gt;</button>
-                  </div>
-                  <div class="calendar-grid weekdays">
-                    <div class="weekday">Dom</div><div class="weekday">Lun</div><div class="weekday">Mar</div><div class="weekday">Mié</div><div class="weekday">Jue</div><div class="weekday">Vie</div><div class="weekday">Sáb</div>
-                  </div>
-                  <div class="calendar-grid" id="calendarDays"></div>
+                <div class="calendar-header" style="display:flex; justify-content:space-between; align-items:center;">
+                  <button id="prevMonth">&lt; Ant</button>
+                  <h3 id="monthYear">...</h3>
+                  <button id="nextMonth">Sig &gt;</button>
                 </div>
-                <div id="priceSummary" class="price-summary" style="display: none;">
-                  <h3>Resumen de Cotización</h3>
-                  <p><span>Check-in:</span> <span id="summaryCheckIn"></span></p>
-                  <p><span>Check-out:</span> <span id="summaryCheckOut"></span></p>
-                  <p><span>Total de noches:</span> <span id="summaryNights"></span></p>
-                  <p><span>Subtotal (noches):</span> <span id="summarySubtotal"></span></p>
-                  <p><span>Tarifa de limpieza:</span> <span id="summaryCleaningFee"></span></p>
-                  <p class="total"><span>PRECIO TOTAL:</span> <span id="summaryTotal"></span></p>
+                
+                <div class="calendar-grid weekdays" style="font-weight:bold;">
+                  <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
                 </div>
-                <div id="priceLoader" style="display: none;">Calculando precio...</div>
-                <div class="booking-form" id="bookingForm" style="display: none;">
-                  <h3>Completa tu Reserva</h3>
-                  <div class="form-group">
-                    <label for="customerName">Nombre Completo:</label>
-                    <input type="text" id="customerName" placeholder="Tu nombre y apellido">
-                  </div>
-                  <div class="form-group">
-                    <label for="customerEmail">Correo Electrónico:</label>
-                    <input type="email" id="customerEmail" placeholder="tu.email@ejemplo.com">
-                  </div>
-                  <div class="form-group">
-                    <label for="customerPhone">Celular (10 dígitos):</label>
-                    <input type="tel" id="customerPhone" placeholder="Tu número de celular">
-                  </div>
-                  <button id="submitBooking" disabled>Confirmar Reserva</button>
-                </div>
-                <div id="bookingMessage" class="booking-message" style="display: none;"></div>
+                
+                <div class="calendar-grid" id="calendarDays"></div>
             </div>
+            
+            <div id="priceSummary" class="hidden" style="margin-top:20px; padding:15px; background:#f9f9f9; border:1px solid #ddd;">
+                <h3>Resumen</h3>
+                <p>Check-in: <span id="sCheckIn"></span></p>
+                <p>Check-out: <span id="sCheckOut"></span></p>
+                <p>Noches: <span id="sNights"></span></p>
+                <h3 style="color: green;">Total: $<span id="sTotal"></span> MXN</h3>
+                
+                <div id="bookingForm" style="margin-top:15px;">
+                    <input type="text" id="cName" placeholder="Nombre Completo" style="width:100%; margin-bottom:5px; padding:8px;">
+                    <input type="email" id="cEmail" placeholder="Correo" style="width:100%; margin-bottom:5px; padding:8px;">
+                    <input type="tel" id="cPhone" placeholder="Teléfono" style="width:100%; margin-bottom:10px; padding:8px;">
+                    <button id="btnBook" style="width:100%; padding:10px; background:#007bff; color:white; border:none; cursor:pointer;">CONFIRMAR RESERVA</button>
+                </div>
+            </div>
+            <div id="msgBox" style="margin-top:10px; padding:10px; display:none;"></div>
         </div>
     </main>
-    
-    <script src="app.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js');
-        }
-    </script>
+
+    <script src="motor.js?v=2.0"></script>
+
 </body>
 </html>
