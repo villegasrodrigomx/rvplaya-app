@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // --- CONFIGURACIÓN PRINCIPAL ---
     // Usamos la ruta directa configurada en netlify.toml
-    const API_ENDPOINT = '/api'; 
+    const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwMdaEIZi3EqnDbVoul-EjVfjvl4bCu3GOwteHAQtK3rFqdVVCuh0EVcaKVRqCJ2pezqQ/exec'; 
     
     // Detectar si estamos viendo una propiedad específica o la home
     const params = new URLSearchParams(window.location.search);
@@ -359,3 +359,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+
