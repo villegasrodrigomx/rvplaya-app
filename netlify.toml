@@ -1,10 +1,7 @@
 [build]
   publish = "."
 
-# Configuración de redirección (Proxy)
-# Esto hace que cuando tu app llame a "/api", Netlify vaya a buscar los datos a Google
-# sin que el navegador se entere ni muestre la URL de Google.
-
+# El Puente Mágico
 [[redirects]]
   from = "/api"
   to = "https://script.google.com/macros/s/AKfycbwMdaEIZi3EqnDbVoul-EjVfjvl4bCu3GOwteHAQtK3rFqdVVCuh0EVcaKVRqCJ2pezqQ/exec"
