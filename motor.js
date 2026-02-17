@@ -1,5 +1,6 @@
 // --- CONFIGURACIÓN ---
-const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwMdaEIZi3EqnDbVoul-EjVfjvl4bCu3GOwteHAQtK3rFqdVVCuh0EVcaKVRqCJ2pezqQ/exec'; 
+//const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwMdaEIZi3EqnDbVoul-EjVfjvl4bCu3GOwteHAQtK3rFqdVVCuh0EVcaKVRqCJ2pezqQ/exec'; 
+const API_URL = '/api'
 
 // Estado Global
 let state = {
