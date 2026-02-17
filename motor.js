@@ -24,7 +24,6 @@ const el = {
 
 // --- INICIO ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Router simple
     const params = new URLSearchParams(window.location.search);
     const id = params.get('propiedad');
 
@@ -34,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarHome();
     }
 
-    // Eventos botones mes
     document.getElementById('prevMonth').onclick = () => cambiarMes(-1);
     document.getElementById('nextMonth').onclick = () => cambiarMes(1);
     el.btnBook.onclick = enviarReserva;
@@ -59,7 +57,7 @@ async function cargarHome() {
             el.lista.appendChild(btn);
         });
     } catch (e) {
-        el.lista.innerHTML = `<p style="color:red">Error cargando propiedades: ${e.message}</p>`;
+        el.lista.innerHTML = `<p style="color:red">Error Home: ${e.message}</p>`;
     }
 }
 
@@ -67,15 +65,11 @@ async function cargarMotor(id) {
     state.propiedadId = id;
     el.home.classList.add('hidden');
     el.booking.classList.remove('hidden');
-    el.dias.innerHTML = 'Cargando disponibilidad...';
+    el.dias.innerHTML = 'Iniciando diagnóstico...';
 
-    // 1. Obtener nombre (opcional) y 2. Disponibilidad
-    try {
-        // Cargar calendario inicial
-        await actualizarCalendario();
-    } catch (e) {
-        el.dias.innerHTML = 'Error de conexión.';
-    }
+    // ¡AQUÍ ESTABA EL ERROR! 
+    // He quitado el try/catch que ocultaba la verdad.
+    await actualizarCalendario();
 }
 
 async function actualizarCalendario() {
@@ -89,26 +83,31 @@ async function actualizarCalendario() {
     try {
         const res = await fetch(url);
         
-        // 1. Leemos la respuesta como TEXTO PURO primero
-        const textoCrudo = await res.text();
-        console.log("Respuesta del servidor:", textoCrudo); // Míralo en la consola (F12)
+        // LEER TEXTO CRUDO PARA DIAGNÓSTICO
+        const texto = await res.text();
+        console.log("Respuesta RAW:", texto);
 
-        // 2. Intentamos convertirlo a JSON
+        // INTENTAR PARSEAR JSON
         let data;
         try {
-            data = JSON.parse(textoCrudo);
-        } catch (jsonError) {
-            // SI FALLA AQUÍ, ES QUE RECIBIMOS HTML (LOGIN O ERROR)
-            throw new Error("No recibí JSON. Recibí esto: " + textoCrudo.substring(0, 100));
+            data = JSON.parse(texto);
+        } catch (e) {
+            // SI FALLA AQUÍ, MOSTRAMOS LO QUE LLEGÓ (HTML DE ERROR O LOGIN)
+            throw new Error(`NO ES JSON. Recibí: ${texto.substring(0, 150)}...`);
         }
 
+        // Si llegamos aquí, es JSON válido
         state.fechasOcupadas = Array.isArray(data) ? data : [];
         renderizarDias();
 
     } catch (e) {
         console.error(e);
-        // ESTO PONDRÁ EL ERROR REAL EN LA PANTALLA
-        el.dias.innerHTML = `<div style="color:red; padding:20px;">ERROR REAL: ${e.message}</div>`;
+        // AHORA SÍ VERÁS EL ERROR REAL EN PANTALLA
+        el.dias.innerHTML = `
+            <div style="color:red; padding:10px; border:1px solid red; background:#fff0f0;">
+                <strong>DIAGNÓSTICO TONY:</strong><br>
+                ${e.message}
+            </div>`;
     }
 }
 
@@ -120,23 +119,19 @@ function renderizarDias() {
     const primerDia = new Date(anio, mes, 1).getDay();
     const diasEnMes = new Date(anio, mes + 1, 0).getDate();
     
-    // Relleno inicial
     for(let i=0; i<primerDia; i++) el.dias.appendChild(document.createElement('div'));
 
     for(let d=1; d<=diasEnMes; d++) {
         const fecha = new Date(anio, mes, d);
-        const fechaStr = fecha.toISOString().split('T')[0]; // YYYY-MM-DD
+        const fechaStr = fecha.toISOString().split('T')[0];
         const div = document.createElement('div');
         div.className = 'day';
         div.textContent = d;
 
-        // Lógica de Estado
         if (state.fechasOcupadas.includes(fechaStr)) {
             div.classList.add('occupied');
         } else {
             div.onclick = () => clickFecha(fecha);
-            
-            // Pintar selección
             if (state.seleccion.inicio && fecha.getTime() === state.seleccion.inicio.getTime()) div.classList.add('selected');
             if (state.seleccion.fin && fecha.getTime() === state.seleccion.fin.getTime()) div.classList.add('selected');
             if (state.seleccion.inicio && state.seleccion.fin && fecha > state.seleccion.inicio && fecha < state.seleccion.fin) div.classList.add('selected');
@@ -147,18 +142,15 @@ function renderizarDias() {
 
 function clickFecha(fecha) {
     const { inicio, fin } = state.seleccion;
-    
     if (!inicio || (inicio && fin)) {
-        // Nueva selección
         state.seleccion = { inicio: fecha, fin: null };
         el.resumen.classList.add('hidden');
     } else {
-        // Cerrar rango
         if (fecha > inicio && validarRango(inicio, fecha)) {
             state.seleccion.fin = fecha;
             cotizar();
         } else {
-            state.seleccion = { inicio: fecha, fin: null }; // Reiniciar
+            state.seleccion = { inicio: fecha, fin: null };
         }
     }
     renderizarDias();
@@ -205,13 +197,11 @@ async function enviarReserva() {
         total: document.getElementById('sTotal').textContent
     };
 
-    // POST "no-cors" hack para GAS
     await fetch(API_URL, {
         method: 'POST',
         body: JSON.stringify(datos)
     });
 
-    // Asumimos éxito si no explota (GAS es tricky con CORS)
     el.resumen.innerHTML = `<h3 style="color:green">¡Reserva Enviada!</h3><p>Revisa tu correo.</p><button onclick="window.location.reload()">Nueva Reserva</button>`;
 }
 
