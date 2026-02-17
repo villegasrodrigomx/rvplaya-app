@@ -84,14 +84,32 @@ async function actualizarCalendario() {
     
     el.mes.textContent = state.fechaActual.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
     
-    // Fetch Disponibilidad
     const url = `${API_URL}?action=getAvailability&propiedadId=${state.propiedadId}&month=${mes}&year=${anio}`;
-    const res = await fetch(url);
-    const data = await res.json(); // Esperamos array ["2025-01-01", ...]
     
-    state.fechasOcupadas = Array.isArray(data) ? data : [];
-    
-    renderizarDias();
+    try {
+        const res = await fetch(url);
+        
+        // 1. Leemos la respuesta como TEXTO PURO primero
+        const textoCrudo = await res.text();
+        console.log("Respuesta del servidor:", textoCrudo); // Míralo en la consola (F12)
+
+        // 2. Intentamos convertirlo a JSON
+        let data;
+        try {
+            data = JSON.parse(textoCrudo);
+        } catch (jsonError) {
+            // SI FALLA AQUÍ, ES QUE RECIBIMOS HTML (LOGIN O ERROR)
+            throw new Error("No recibí JSON. Recibí esto: " + textoCrudo.substring(0, 100));
+        }
+
+        state.fechasOcupadas = Array.isArray(data) ? data : [];
+        renderizarDias();
+
+    } catch (e) {
+        console.error(e);
+        // ESTO PONDRÁ EL ERROR REAL EN LA PANTALLA
+        el.dias.innerHTML = `<div style="color:red; padding:20px;">ERROR REAL: ${e.message}</div>`;
+    }
 }
 
 function renderizarDias() {
