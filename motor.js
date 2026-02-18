@@ -95,7 +95,6 @@ function renderizarDias() {
     const primerDia = new Date(anio, mes, 1).getDay();
     const diasEnMes = new Date(anio, mes + 1, 0).getDate();
     
-    // Calcular "HOY" sin horas para comparar
     const hoy = new Date();
     hoy.setHours(0,0,0,0);
 
@@ -103,19 +102,28 @@ function renderizarDias() {
 
     for(let d=1; d<=diasEnMes; d++) {
         const fecha = new Date(anio, mes, d);
-        const fechaStr = fecha.toISOString().split('T')[0];
+        
+        // --- FIX FECHA LOCAL ---
+        // Construimos el string YYYY-MM-DD manualmente usando los componentes locales
+        // Esto evita que toISOString() nos robe un día por diferencia horaria
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, '0');
+        const day = String(fecha.getDate()).padStart(2, '0');
+        const fechaStr = `${year}-${month}-${day}`;
+        // -----------------------
+
         const div = document.createElement('div');
         div.className = 'day';
         div.textContent = d;
 
-        // REGLA: Bloquear días pasados Y el día de hoy (política de no same-day booking)
         if (fecha <= hoy) {
             div.classList.add('occupied', 'past');
-            div.style.backgroundColor = "#f0f0f0"; // Visualmente desactivado
+            div.style.backgroundColor = "#f0f0f0";
             div.style.cursor = "not-allowed";
         } 
         else if (state.fechasOcupadas.includes(fechaStr)) {
             div.classList.add('occupied');
+            div.title = "Ocupado";
         } 
         else {
             div.onclick = () => clickFecha(fecha);
