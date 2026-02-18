@@ -1,6 +1,5 @@
 // --- CONFIGURACIÓN ---
-//const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwMdaEIZi3EqnDbVoul-EjVfjvl4bCu3GOwteHAQtK3rFqdVVCuh0EVcaKVRqCJ2pezqQ/exec'; 
-const API_URL = '/api'
+const API_URL = '/api'; 
 
 // Estado Global
 let state = {
@@ -66,10 +65,7 @@ async function cargarMotor(id) {
     state.propiedadId = id;
     el.home.classList.add('hidden');
     el.booking.classList.remove('hidden');
-    el.dias.innerHTML = 'Iniciando diagnóstico...';
-
-    // ¡AQUÍ ESTABA EL ERROR! 
-    // He quitado el try/catch que ocultaba la verdad.
+    el.dias.innerHTML = 'Cargando disponibilidad...';
     await actualizarCalendario();
 }
 
@@ -83,32 +79,11 @@ async function actualizarCalendario() {
     
     try {
         const res = await fetch(url);
-        
-        // LEER TEXTO CRUDO PARA DIAGNÓSTICO
-        const texto = await res.text();
-        console.log("Respuesta RAW:", texto);
-
-        // INTENTAR PARSEAR JSON
-        let data;
-        try {
-            data = JSON.parse(texto);
-        } catch (e) {
-            // SI FALLA AQUÍ, MOSTRAMOS LO QUE LLEGÓ (HTML DE ERROR O LOGIN)
-            throw new Error(`NO ES JSON. Recibí: ${texto.substring(0, 150)}...`);
-        }
-
-        // Si llegamos aquí, es JSON válido
+        const data = await res.json();
         state.fechasOcupadas = Array.isArray(data) ? data : [];
         renderizarDias();
-
     } catch (e) {
-        console.error(e);
-        // AHORA SÍ VERÁS EL ERROR REAL EN PANTALLA
-        el.dias.innerHTML = `
-            <div style="color:red; padding:10px; border:1px solid red; background:#fff0f0;">
-                <strong>DIAGNÓSTICO TONY:</strong><br>
-                ${e.message}
-            </div>`;
+        el.dias.innerHTML = `<div style="color:red; padding:10px;">Error: ${e.message}</div>`;
     }
 }
 
@@ -120,6 +95,10 @@ function renderizarDias() {
     const primerDia = new Date(anio, mes, 1).getDay();
     const diasEnMes = new Date(anio, mes + 1, 0).getDate();
     
+    // Calcular "HOY" sin horas para comparar
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0);
+
     for(let i=0; i<primerDia; i++) el.dias.appendChild(document.createElement('div'));
 
     for(let d=1; d<=diasEnMes; d++) {
@@ -129,9 +108,16 @@ function renderizarDias() {
         div.className = 'day';
         div.textContent = d;
 
-        if (state.fechasOcupadas.includes(fechaStr)) {
+        // REGLA: Bloquear días pasados Y el día de hoy (política de no same-day booking)
+        if (fecha <= hoy) {
+            div.classList.add('occupied', 'past');
+            div.style.backgroundColor = "#f0f0f0"; // Visualmente desactivado
+            div.style.cursor = "not-allowed";
+        } 
+        else if (state.fechasOcupadas.includes(fechaStr)) {
             div.classList.add('occupied');
-        } else {
+        } 
+        else {
             div.onclick = () => clickFecha(fecha);
             if (state.seleccion.inicio && fecha.getTime() === state.seleccion.inicio.getTime()) div.classList.add('selected');
             if (state.seleccion.fin && fecha.getTime() === state.seleccion.fin.getTime()) div.classList.add('selected');
@@ -184,6 +170,13 @@ async function cotizar() {
 }
 
 async function enviarReserva() {
+    // Validar PAX
+    const paxInput = document.getElementById('cPax');
+    if(!paxInput.value || paxInput.value < 1) {
+        alert("Por favor indica el número de personas.");
+        return;
+    }
+
     el.btnBook.disabled = true;
     el.btnBook.textContent = "Procesando...";
     
@@ -195,6 +188,7 @@ async function enviarReserva() {
         customerName: document.getElementById('cName').value,
         customerEmail: document.getElementById('cEmail').value,
         customerPhone: document.getElementById('cPhone').value,
+        pax: paxInput.value, // <--- ENVIAMOS PAX
         total: document.getElementById('sTotal').textContent
     };
 
