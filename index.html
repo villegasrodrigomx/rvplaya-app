@@ -51,9 +51,13 @@
                 <h3 style="color: green;">Total: $<span id="sTotal"></span> MXN</h3>
                 
                 <div id="bookingForm" style="margin-top:15px;">
+                    <label style="display:block; margin-bottom:5px; font-size:0.9em;">Datos de la Reserva:</label>
                     <input type="text" id="cName" placeholder="Nombre Completo" style="width:100%; margin-bottom:5px; padding:8px;">
                     <input type="email" id="cEmail" placeholder="Correo" style="width:100%; margin-bottom:5px; padding:8px;">
-                    <input type="tel" id="cPhone" placeholder="Teléfono" style="width:100%; margin-bottom:10px; padding:8px;">
+                    <input type="tel" id="cPhone" placeholder="Teléfono" style="width:100%; margin-bottom:5px; padding:8px;">
+                    
+                    <input type="number" id="cPax" placeholder="Número de Personas (PAX)" min="1" style="width:100%; margin-bottom:10px; padding:8px;">
+                    
                     <button id="btnBook" style="width:100%; padding:10px; background:#007bff; color:white; border:none; cursor:pointer;">CONFIRMAR RESERVA</button>
                 </div>
             </div>
@@ -65,3 +69,4 @@
 
 </body>
 </html>
+
